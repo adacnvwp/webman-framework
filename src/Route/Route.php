@@ -14,6 +14,7 @@
 
 namespace Webman\Route;
 
+use CommonLibrary\Arr;
 use Webman\Route as Router;
 use function array_merge;
 use function count;
@@ -67,6 +68,18 @@ class Route
         $this->methods = (array)$methods;
         $this->path = $path;
         $this->callback = $callback;
+
+        //修改
+        $middlewares    =   [];
+        $middleware_array =   \CommonLibrary\Route::$_middlewareWraps;
+
+        while ($middleware_array)
+        {
+            $middlewares    =   array_merge($middlewares, array_shift($middleware_array));
+        }
+
+        $this->middlewares = array_reverse($middlewares);
+        //override  route class
     }
 
     /**
@@ -85,7 +98,8 @@ class Route
      */
     public function name(string $name): Route
     {
-        $this->name = $name;
+        //修改
+        $this->name = implode('', \CommonLibrary\Route::$_name) . $name;
         Router::setByName($name, $this);
         return $this;
     }
@@ -100,8 +114,16 @@ class Route
         if ($middleware === null) {
             return $this->middlewares;
         }
-        $this->middlewares = array_merge($this->middlewares, is_array($middleware) ? array_reverse($middleware) : [$middleware]);
+
+        //修改
+        $this->middlewares = array_merge(is_array($middleware) ? array_reverse($middleware) : [$middleware], $this->middlewares);
+//        $this->middlewares = array_merge($this->middlewares, is_array($middleware) ? array_reverse($middleware) : [$middleware]);
         return $this;
+    }
+
+    public function withoutMiddleware($without_middlewares = [])
+    {
+        $this->middlewares = array_diff($this->middlewares, Arr::wrap($without_middlewares));
     }
 
     /**
