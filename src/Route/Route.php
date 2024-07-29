@@ -14,7 +14,7 @@
 
 namespace Webman\Route;
 
-use CommonLibrary\Arr;
+use CommonLib\Arr;
 use Webman\Route as Router;
 use function array_merge;
 use function count;
@@ -71,7 +71,7 @@ class Route
 
         //修改
         $middlewares    =   [];
-        $middleware_array =   \CommonLibrary\Route::$_middlewareWraps;
+        $middleware_array =   \CommonLib\Route::$_middlewareWraps;
 
         while ($middleware_array)
         {
@@ -99,7 +99,7 @@ class Route
     public function name(string $name): Route
     {
         //修改
-        $this->name = implode('', \CommonLibrary\Route::$_name) . $name;
+        $this->name = implode('', \CommonLib\Route::$_name) . $name;
         Router::setByName($name, $this);
         return $this;
     }
